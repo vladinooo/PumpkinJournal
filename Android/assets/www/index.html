@@ -11,65 +11,27 @@
 		
 		<script src="js/jquery-1.10.2.min.js"></script>
 		<script src="js/jquery.mobile-1.3.2.min.js"></script>
-		<script src="jjs/cordova.js"></script> 
+		<script src="js/cordova.js"></script> 
 		<script src="js/functions.js"></script> 
 		<script>
 			
-			var db, articleData;
+			var db, dbResults, itemIndex, articleData;
 			
 			articleData = {name:"", description:""};
 			
 			$(document).on("pageinit", function() {
 				// listen for device ready
-				document.addEventListener("deviceready", onDeviceReady, false);
-								
-				$("#savenote").bind("tap", function() {
-					notedata.notetitle = $("#notetitle").val();
-					notedata.notedetail = $("#notedetail").val();
-					notedata.imagesource =  $("#noteimage").attr("src");
-					notedata.notelat = lat;
-					notedata.notelon = lon;
-					db.transaction(saveNote, onDbError, onDbSuccess);
-				});
-				
-				$(document).bind("mobileinit", function(){
-					$.mobile.pushStateEnabled = false;
-					});
-				
-				$("#addArticleBtn").bind("tap", function() {
-					$.mobile.changePage('#addArticle');
-				});
-				
-				$("#saveArticleBtn").bind("tap", function() {
-					$.mobile.changePage('#main');
-				});
-				
-				$("#cancelArticleBtn").bind("tap", function() {
-					$.mobile.changePage('#main');
-				});
-				
-				$("#addFolderBtn").bind("tap", function() {
-					$.mobile.changePage('#addFolder', {
-				        transition : 'pop',
-				        role : 'dialog'
-				    });
-				});
-				
-				$("#saveFolderBtn").bind("tap", function() {
-					$.mobile.changePage('#main');
-				});
-				
-				$("#cancelFolderBtn").bind("tap", function() {
-					$.mobile.changePage('#main');
-				});
-				
-				
+				document.addEventListener("deviceready", onDeviceReady, false);				
 			});
 		
 			
 			function onDeviceReady() {
 				alert("It works!");
+				db = window.openDatabase("Journal", "1.0", "Pumpkin's Journal", 52428800);
+				db.transaction(getArticles, onDbError, onDbSuccess);
 			}
+			
+
 		</script>
 		
 	</head>
@@ -84,12 +46,13 @@
 				<h1>Articles</h1>
 				<div class="ui-btn-right">
 			        <a id="filterBtn" class="headerButton" href="javascript:showHideSearchBar()" data-role="button" data-icon="search" data-iconpos="notext"></a>
-			        <a id="addArticleBtn" class="headerButton" href="#" data-role="button" data-icon="plus" data-iconpos="notext"></a>
+			        <a id="addArticleBtn" class="headerButton" href="javascript:addArticle()" data-role="button" data-icon="plus" data-iconpos="notext"></a>
 			    </div>
 			</div>
 			
 			<div data-role="content" id="articles">
 			</div>
+			
 		</div><!-- main -->
 		
 		<div id="addFolder" data-role="dialog" data-close-btn="none">
@@ -100,8 +63,8 @@
 			<div data-role="content">
 				<label for="folderName">Folder Name:</label>
     			<input type="text" name="folderName" id="folderName" value=""  />
-    			<a id="cancelFolderBtn" href="#" data-role="button" data-inline="true">Cancel</a>
-    			<a id="saveFolderBtn" href="#" data-role="button" data-inline="true" data-theme="b">OK</a>
+    			<a id="cancelFolderBtn" href="javascript:cancelFolder()" data-role="button" data-inline="true">Cancel</a>
+    			<a id="saveFolderBtn" href="javascript:saveFolder()" data-role="button" data-inline="true" data-theme="b">OK</a>
 			</div>
 		</div><!-- addFolder -->
 		
@@ -116,8 +79,8 @@
     			<input type="text" name="articleTitle" id="articleTitle" value=""  />
     			<label for="articleDescription">Description:</label>
 				<textarea name="articleDescription" id="articleDescription"></textarea>
-				<a id="cancelArticleBtn" href="#" data-role="button" data-inline="true">Cancel</a>
-    			<a id="saveArticleBtn" href="#" data-role="button" data-inline="true" data-theme="b">OK</a>
+				<a id="cancelArticleBtn" href="javascript:cancelArticle()" data-role="button" data-inline="true">Cancel</a>
+    			<a id="saveArticleBtn" href="javascript:saveArticle(db, articleData)" data-role="button" data-inline="true" data-theme="b">OK</a>
 			</div>
 		</div><!-- addArticle -->
 		
