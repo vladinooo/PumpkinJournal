@@ -1,4 +1,5 @@
 
+
 function showHideSearchBar() {
 	$('.ui-listview-filter').toggle();
 }
@@ -7,7 +8,7 @@ function showHideSearchBar() {
 function createNavigation(folders) {
 	var output = '<ul data-role="listview">';
 	output += '<li data-role="list-divider" class="list-divider"></li>';
-	output += '<li data-icon="plus"><a href="javascript:addFolder()" data-rel="dialog">New Folder</a></li>';
+	output += '<li data-icon="plus" id="addFolderBtn"><a href="#">New Folder</a></li>';
 	output += listFolders(folders);
 	output += '<li data-role="list-divider" class="list-divider"></li>';
 	output += '<li data-icon="gear"><a href="#">Settings</a></li>';
@@ -23,10 +24,6 @@ function listFolders(folders) {
 		output += '</li>';
 	});
 	return output;
-}
-
-function addFolder() {
-	$.mobile.changePage('#addFolder');
 }
 
 function listArticles(articles) {
